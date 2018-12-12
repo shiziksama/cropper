@@ -1,0 +1,82 @@
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<body style="margin:0">
+
+<canvas id="canvas" style="width:100vw;height:100vh">
+</canvas>
+<script>
+//var canvas = document.getElementById('canvas');
+//var ctx = canvas.getContext('2d');
+//var image = document.getElementById('source');
+
+//ctx.drawImage(image, 33, 71, 104, 124, 21, 20, 87, 104);
+
+var readFile = function(file) {
+    if( (/image/i).test(file.type) ) {
+        //define FileReader object
+        var reader = new FileReader();
+             
+        //init reader onload event handlers
+        reader.onload = function(e) {   
+			var image = new Image;
+			image.onload=function(){
+				getCanvasImage(this);
+			};
+			image.src=e.target.result;  
+        };
+             
+        //begin reader read operation
+        reader.readAsDataURL(file);
+    } else {
+        //some message for wrong file format
+    }
+}
+function processFiles(files) {
+    //check for browser support 
+    if(files && typeof FileReader !== "undefined") {
+        //extract FileList as File object
+        for(var i=0; i<files.length; i++) {
+            readFile(files[i]);
+        }
+    }
+    else {
+        //some message or fallback
+    }
+}
+var getCanvasImage = function(image) {
+ 
+    //define canvas image
+	var c = document.getElementById("canvas");
+	var ctx = c.getContext("2d");
+	
+	console.log('draw_image');
+    ctx.drawImage(image, 33, 71, 104, 124, 21, 20, 87, 104);
+         
+    //convert canvas to jpeg URL
+    //return $('canvas')[0].toDataURL("image/jpeg");
+}
+
+$(document).ready(function(){
+$('canvas').on('drop', function(e) {
+	console.log('drop');
+    //prevent browser from open the file when drop off
+    e.stopPropagation();
+    e.preventDefault();
+//    dropzone.removeClass('hover');
+ 
+    //retrieve uploaded files data
+    var files = e.originalEvent.dataTransfer.files;
+    processFiles(files);
+ 
+    return false;
+});
+$('canvas').on('dragover', function() {
+	console.log('dragover');
+    //add hover class when drag over
+    return false;
+});
+ 
+});
+</script>
+
+
+</body>
